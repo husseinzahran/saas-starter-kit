@@ -73,8 +73,8 @@ export default async function handler(req, res) {
         const { start_date, end_date, vendor, tag } = req.query;
 
         const stores = [
-            { url: 'https://b0cac9-2.myshopify.com', token: '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' },
-            { url: 'https://best-brands-in-egypt.myshopify.com', token: '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' },
+            { url: 'https://b0cac9-2.myshopify.com', token: `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_HUSHY}` },
+            { url: 'https://best-brands-in-egypt.myshopify.com', token: `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}` },
             // Add more stores as needed
         ];
 
