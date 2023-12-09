@@ -7,27 +7,20 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum Role {
-  ADMIN
-  OWNER
-  MEMBER
-}
-
 model Account {
   id                String  @id @default(uuid())
   userId            String
   type              String
   provider          String
   providerAccountId String
-  refresh_token     String? @db.Text
-  access_token      String? @db.Text
+  refresh_token     String?
+  access_token      String?
   expires_at        Int?
   token_type        String?
   scope             String?
-  id_token          String? @db.Text
+  id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -49,35 +42,33 @@ model VerificationToken {
 }
 
 model User {
-  id                     String    @id @default(uuid())
+  id                     String       @id @default(uuid())
   name                   String
-  email                  String    @unique
+  email                  String       @unique
   emailVerified          DateTime?
   password               String?
   image                  String?
-  createdAt              DateTime  @default(now())
-  updatedAt              DateTime  @default(now())
-  invalid_login_attempts Int       @default(0)
+  createdAt              DateTime     @default(now())
+  updatedAt              DateTime     @default(now())
+  invalid_login_attempts Int          @default(0)
   lockedAt               DateTime?
-
-  teamMembers TeamMember[]
-  accounts    Account[]
-  sessions    Session[]
-  invitations Invitation[]
+  accounts               Account[]
+  invitations            Invitation[]
+  sessions               Session[]
+  teamMembers            TeamMember[]
 }
 
 model Team {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
-  slug        String   @unique
-  domain      String?  @unique
-  defaultRole Role     @default(MEMBER)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now())
-
-  members     TeamMember[]
-  invitations Invitation[]
+  slug        String       @unique
+  domain      String?      @unique
+  defaultRole Role         @default(MEMBER)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @default(now())
   apiKeys     ApiKey[]
+  invitations Invitation[]
+  members     TeamMember[]
 }
 
 model TeamMember {
@@ -87,9 +78,8 @@ model TeamMember {
   role      Role     @default(MEMBER)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, userId])
   @@index([userId])
@@ -105,9 +95,8 @@ model Invitation {
   invitedBy String
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now())
-
-  user User @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [invitedBy], references: [id], onDelete: Cascade)
+  team      Team     @relation(fields: [teamId], references: [id], onDelete: Cascade)
 
   @@unique([teamId, email])
 }
@@ -130,6 +119,72 @@ model ApiKey {
   updatedAt  DateTime  @default(now())
   expiresAt  DateTime?
   lastUsedAt DateTime?
+  team       Team      @relation(fields: [teamId], references: [id], onDelete: Cascade)
+}
 
-  team Team @relation(fields: [teamId], references: [id], onDelete: Cascade)
+model orders {
+  id                          BigInt    @id
+  data                        Json
+  created_at                  DateTime? @default(dbgenerated("jsonb_to_timestamp((data -> 'created_at'::text))")) @db.Timestamp(6)
+  total_unit_cost_amount      Decimal?  @default(dbgenerated("sum_unit_costs_prod(data)")) @db.Decimal
+  commission                  Decimal?  @db.Decimal
+  total_discounts             Decimal?  @default(dbgenerated("((data ->> 'total_discounts'::text))::numeric")) @db.Decimal
+  shop_money_amount           Decimal?  @default(dbgenerated("((((data -> 'total_line_items_price_set'::text) -> 'shop_money'::text) ->> 'amount'::text))::numeric")) @db.Decimal
+  total_amount_for_hushy_wear Decimal?  @db.Decimal
+  order_name                  String?   @default(dbgenerated("(data ->> 'name'::text)"))
+  customer_phone              String?   @default(dbgenerated("clean_and_extract_phone(data)"))
+  order_status                String?   @db.VarChar(255)
+  isexchange                  Boolean?  @default(false)
+  total_price                 Decimal?  @default(dbgenerated("((data ->> 'total_price'::text))::numeric")) @db.Decimal(10, 2)
+}
+
+model qp_orders_full {
+  id                Int      @id(map: "qp_orders_pkey_f") @default(autoincrement())
+  phone             String?  @db.VarChar(20)
+  address           String?
+  cod               Boolean?
+  collected         Boolean?
+  returned          Boolean?
+  notes             String?
+  weight            Decimal? @db.Decimal(10, 2)
+  city              String?  @db.VarChar(100)
+  status            String?  @db.VarChar(100)
+  full_name         String?  @map("full name") @db.VarChar(250)
+  total_amount      Float?   @map("total amount") @db.Real
+  total_fees        Float?   @map("total fees") @db.Real
+  order_date        String?  @map("order date") @db.VarChar(500)
+  shipment_contents String?  @map("shipment contents") @db.VarChar(500)
+  status_note       String?  @map("status note") @db.VarChar(500)
+  serial            Int?
+}
+
+model vendors {
+  id          Int      @id @default(autoincrement())
+  vendor_name String?
+  commission  Decimal? @db.Decimal
+  status      String?
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model operation_cost {
+  ops_cost Decimal? @db.Decimal
+
+  @@ignore
+}
+
+model marketing_cost {
+  id            Int       @id @default(autoincrement())
+  campaign_id   BigInt?
+  amount_spent  Decimal?  @db.Decimal(10, 2)
+  campaign_date DateTime? @db.Date
+  campaign_name String?   @db.VarChar(255)
+  roas          Decimal?  @db.Decimal(10, 2)
+  cpm           Decimal?  @db.Decimal(10, 2)
+  cpp           Decimal?  @db.Decimal(10, 2)
+}
+
+enum Role {
+  ADMIN
+  OWNER
+  MEMBER
 }
