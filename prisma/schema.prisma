@@ -188,3 +188,15 @@ enum Role {
   OWNER
   MEMBER
 }
+
+model DailyProfit {
+    id                  Int     @id
+    order_date_formatted DateTime     @db.Date
+    marketing_spent      Float
+    profit               Float // This is a calculated field in the view
+    commission           Float
+    shop_money_sum       Float
+    hushy_revenue        Float
+
+    @@map("daily_profit")
+}
