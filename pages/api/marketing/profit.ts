@@ -1,9 +1,24 @@
+// pages/api/your-api-route.js (e.g., pages/api/marketing/profit.js)
+import Cors from 'cors';
+import initMiddleware from '../../../lib/init-middleware';
 import { PrismaClient } from '@prisma/client';
 import { parse, format } from 'date-fns';
 
 const prisma = new PrismaClient();
 
+// Initialize the cors middleware
+const cors = initMiddleware(
+  Cors({
+    // Only allow requests with GET, POST, and OPTIONS
+    methods: ['GET', 'POST', 'OPTIONS'],
+    // Optional: Configure the allowed origins or set it to true to allow any origin
+    origin: true,
+  })
+);
+
+
 export default async function handler(req, res) {
+  await cors(req, res);
   if (req.method === 'GET') {
     let { start_date, end_date } = req.query;
 

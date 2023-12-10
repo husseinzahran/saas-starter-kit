@@ -20,6 +20,8 @@ const unAuthenticatedRoutes = [
   '/unlock-account',
 ];
 
+
+
 export default async function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
