@@ -9,16 +9,17 @@ const prisma = new PrismaClient();
 // Initialize the cors middleware
 const cors = initMiddleware(
   Cors({
-    // Only allow requests with GET, POST, and OPTIONS
+    // Options here: For example, allowing all origins:
+    origin: '*',
     methods: ['GET', 'POST', 'OPTIONS'],
-    // Optional: Configure the allowed origins or set it to true to allow any origin
-    origin: true,
   })
 );
 
 
+
 export default async function handler(req, res) {
   await cors(req, res);
+
   if (req.method === 'GET') {
     let { start_date, end_date } = req.query;
 
@@ -48,7 +49,8 @@ export default async function handler(req, res) {
       res.status(500).json({ error: error.message });
     }
   } else {
-    // Handle other HTTP methods
+    // Handle other HTTP methods or return an error if they're not supported
+    res.setHeader('Allow', ['GET']);
     res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
