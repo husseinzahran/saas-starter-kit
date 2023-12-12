@@ -144,7 +144,7 @@ export default function ShopifyPage() {
                                 <td>{item.totalFulfillableQuantity}</td>
                                 <td>
                                     {item.mainImage && (
-                                        <img src={item.mainImage} alt={item.productName} width="50px" height="80px"/>
+                                        <img src={item.mainImage} alt={item.productName} width="150px" height="180px"/>
                                     )}
                                 </td>
                             </tr>

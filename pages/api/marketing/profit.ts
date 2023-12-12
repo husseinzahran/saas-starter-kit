@@ -1,8 +1,9 @@
 // pages/api/your-api-route.js (e.g., pages/api/marketing/profit.js)
 import Cors from 'cors';
+import { parse, format } from 'date-fns';
 import initMiddleware from '../../../lib/init-middleware';
 import { PrismaClient } from '@prisma/client';
-import { parse, format } from 'date-fns';
+
 
 const prisma = new PrismaClient();
 
@@ -14,7 +15,6 @@ const cors = initMiddleware(
     methods: ['GET', 'POST', 'OPTIONS'],
   })
 );
-
 
 
 export default async function handler(req, res) {
