@@ -26,14 +26,14 @@ export default async function handler(req, res) {
         try {
 
           // Retrieve start_date and end_date from the query parameters
-          const { start_date, end_date } = req.query;
+          const { start_date, end_date, campaignIds } = req.query;
 
           // Validate the dates
           if (!start_date || !end_date) {
               return res.status(400).json({ error: 'start_date and end_date are required' });
           }
             
-          const campaignIds = ['120201685256890557']; // Your predefined list of campaign IDs
+          //const campaignIds = ['120201685256890557']; // Your predefined list of campaign IDs
           const campaignInsights = await fetchCampaignInsights(campaignIds, start_date, end_date);
 
           res.status(200).json(campaignInsights);
@@ -43,12 +43,12 @@ export default async function handler(req, res) {
             res.status(500).json({ error: error.message });
         }
     } else if (req.method === 'POST') {
-      const { start_date, end_date } = req.body;
+      const { start_date, end_date, campaignIds } = req.body;
 
 
       // Validation for start_date and end_date
 
-      const campaignIds = ['120201685256890557']; // Replace with your campaign IDs
+      //const campaignIds = [camp]; // Replace with your campaign IDs
       const campaignInsights = await fetchCampaignInsights(campaignIds, start_date, end_date);
 
       console.log(campaignInsights)
