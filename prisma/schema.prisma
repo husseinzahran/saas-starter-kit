@@ -139,23 +139,23 @@ model orders {
 }
 
 model qp_orders_full {
-  id                Int      @id(map: "qp_orders_pkey_f") @default(autoincrement())
-  phone             String?  @db.VarChar(20)
+  id                Int       @id(map: "qp_orders_pkey_f") @default(autoincrement())
+  phone             String?   @db.VarChar(100)
   address           String?
-  cod               Boolean?
-  collected         Boolean?
-  returned          Boolean?
   notes             String?
-  weight            Decimal? @db.Decimal(10, 2)
-  city              String?  @db.VarChar(100)
-  status            String?  @db.VarChar(100)
-  full_name         String?  @map("full name") @db.VarChar(250)
-  total_amount      Float?   @map("total amount") @db.Real
-  total_fees        Float?   @map("total fees") @db.Real
-  order_date        String?  @map("order date") @db.VarChar(500)
-  shipment_contents String?  @map("shipment contents") @db.VarChar(500)
-  status_note       String?  @map("status note") @db.VarChar(500)
+  weight            Decimal?  @db.Decimal(10, 2)
+  city              String?   @db.VarChar(100)
+  status            String?
+  full_name         String?   @map("full name") @db.VarChar(250)
+  total_amount      Float?    @map("total amount") @db.Real
+  total_fees        Float?    @map("total fees") @db.Real
+  order_date        String?   @map("order date") @db.VarChar(500)
+  shipment_contents String?   @map("shipment contents") @db.VarChar(500)
+  status_note       String?   @map("status note") @db.VarChar(500)
   serial            Int?
+  cod               Float?
+  collected         DateTime? @db.Date
+  returned          DateTime? @db.Date
 }
 
 model vendors {
@@ -183,20 +183,27 @@ model marketing_cost {
   cpp           Decimal?  @db.Decimal(10, 2)
 }
 
+model engagement_ad_data {
+  id                              Int       @id @default(autoincrement())
+  optimization_goal               String?   @db.VarChar(255)
+  clicks                          Int?
+  ad_id                           String?   @db.VarChar(255)
+  ad_name                         String?   @db.VarChar(255)
+  inline_post_engagement          Int?
+  cost_per_inline_post_engagement Decimal?  @db.Decimal(10, 2)
+  objective                       String?   @db.VarChar(255)
+  reach                           Int?
+  wish_bid                        Decimal?  @db.Decimal(10, 2)
+  cpc                             Decimal?  @db.Decimal(10, 3)
+  ctr                             Decimal?  @db.Decimal(10, 6)
+  cpm                             Decimal?  @db.Decimal(10, 6)
+  spend                           Decimal?  @db.Decimal(10, 2)
+  date_start                      DateTime 
+  date_stop                       DateTime 
+}
+
 enum Role {
   ADMIN
   OWNER
   MEMBER
-}
-
-model DailyProfit {
-    id                  Int     @id
-    order_date_formatted DateTime     @db.Date
-    marketing_spent      Float
-    profit               Float // This is a calculated field in the view
-    commission           Float
-    shop_money_sum       Float
-    hushy_revenue        Float
-
-    @@map("daily_profit")
 }
