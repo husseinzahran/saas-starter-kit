@@ -83,7 +83,7 @@ export default async function handler(req, res) {
                     ad_id: adData.ad_id,
                     ad_name: adData.ad_name,
                     campaign_name: adData.campaign_name,
-                    region: adData.region,
+                    region: adData.dma,
                     reach: parseInt(adData.reach, 10),
                     impressions: parseInt(adData.impressions, 10),
                     clicks: parseInt(adData.clicks, 10),
