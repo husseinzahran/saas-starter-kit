@@ -43,7 +43,7 @@ export default async function handler(req, res) {
     const fields = ['cpm', 'reach', 'impressions', 'clicks', 'ad_id', 'ad_name','campaign_name'];
     const params = {
       time_range: dateRange,
-      breakdowns: ['region']
+      breakdowns: ['dma']
     };
 
   
