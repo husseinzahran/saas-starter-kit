@@ -198,8 +198,22 @@ model engagement_ad_data {
   ctr                             Decimal?  @db.Decimal(10, 6)
   cpm                             Decimal?  @db.Decimal(10, 6)
   spend                           Decimal?  @db.Decimal(10, 2)
-  date_start                      DateTime 
-  date_stop                       DateTime 
+  date_start                      DateTime? @db.Timestamptz(6)
+  date_stop                       DateTime? @db.Timestamptz(6)
+}
+
+model ad_insights_region {
+  id            Int       @id @default(autoincrement())
+  cpm           Decimal?  @db.Decimal(10, 2)
+  reach         Int?
+  impressions   Int?
+  clicks        Int?
+  region        String?   @db.VarChar(255)
+  ad_id         String?   @db.VarChar(255)
+  ad_name       String?   @db.VarChar(255)
+  date_eg       DateTime? @db.Timestamp(6)
+  date_est      DateTime? @db.Timestamp(6)
+  campaign_name String?   @db.VarChar(255)
 }
 
 enum Role {
