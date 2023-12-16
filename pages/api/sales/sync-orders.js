@@ -4,9 +4,11 @@ export default async function handler(req, res) {
     // Assuming you get order IDs from the request body or query
       
     const orderIds = req.body.orderIds || [];
+    const shop = req.body.shop;
+    const api = `${process.env.API_DOMAIN}` || 'http://app.giftsny.com'
 
     async function callExternalApi(orderId) {
-      const url = `http://app.giftsny.com/api/sales/store-order?orderId=${orderId}`;
+      const url = `${api}/api/sales/store-order?orderId=${orderId}&shop=${shop}`;
   
       const headers = {
         'Content-Type': 'application/json',

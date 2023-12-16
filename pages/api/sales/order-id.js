@@ -101,14 +101,25 @@ const fetchLineItemDetailsGraphQL = async (variantId, store) => {
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
-      const { orderId } = req.query;
+      const { orderId,shop } = req.query;
   
       if (!orderId) {
         res.status(400).json({ error: 'Missing order ID' });
         return;
       }
-  
-      const store = { url: 'https://best-brands-in-egypt.myshopify.com', token: `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}` };
+
+      let shopName='';
+      let shopToken='';
+      if(shop == 'gifts-egypt'){
+        shopName = 'https://best-brands-in-egypt.myshopify.com';
+        shopToken = `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN}`;
+      }else if(shop == 'hushy'){
+        shopName = 'https://b0cac9-2.myshopify.com';
+        shopToken = `${process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN_HUSHY}`;
+      }
+      
+      console.log(shopName)
+      const store = { url: shopName, token: shopToken };
   
       try {
         const order = await fetchOrderById(orderId, store);

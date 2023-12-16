@@ -20,9 +20,12 @@ const pool = new Pool({
 
 export default async function handler(req, res) {
     if (req.method === 'GET') {
-      const { orderId } = req.query;
-      const fullUrl = `http://localhost:4002/api/sales/order-id?orderId=${orderId}`;
-  
+      const { orderId, shop } = req.query;
+      const api = `${process.env.API_DOMAIN}` || 'http://app.giftsny.com'
+      
+      const fullUrl = `${api}/api/sales/order-id?orderId=${orderId}&shop=${shop}`;
+      console.log(fullUrl)
+      const client = await pool.connect();
       try {
         // Set up headers for the fetch call
         const headers = {
@@ -38,13 +41,14 @@ export default async function handler(req, res) {
         const orderData = await response.json();
   
         // Insert data into PostgreSQL
-        const client = await pool.connect();
-        const insertQuery = 'INSERT INTO orders (id, data) VALUES ($1, $2)';
-        await client.query(insertQuery, [orderData.id, orderData]);
+        
+        const insertQuery = 'INSERT INTO orders (id, data, shop_name) VALUES ($1, $2, $3)';
+        await client.query(insertQuery, [orderData.id, orderData, shop]);
         client.release();
   
         res.status(200).json({ message: 'Order data stored successfully.' });
       } catch (error) {
+        client.release();
         console.error('Error:', error);
         res.status(500).json({ error: 'Internal Server Error' });
       }
