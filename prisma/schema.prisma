@@ -214,6 +214,7 @@ model ad_insights_region {
   date_eg       DateTime? @db.Timestamp(6)
   date_est      DateTime? @db.Timestamp(6)
   campaign_name String?   @db.VarChar(255)
+  inline_post_engagement  Int?
 }
 
 enum Role {

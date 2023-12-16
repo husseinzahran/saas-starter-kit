@@ -40,7 +40,7 @@ export default async function handler(req, res) {
     // const adIdArray = adIds.split(','); // Split the string into an array of Ad IDs
 
 
-    const fields = ['cpm', 'reach', 'impressions', 'clicks', 'ad_id', 'ad_name','campaign_name'];
+    const fields = ['cpm', 'reach', 'impressions', 'clicks', 'ad_id', 'ad_name','campaign_name','dda_results','inline_post_engagement'];
     const params = {
       time_range: dateRange,
       breakdowns: ['dma']
@@ -89,7 +89,8 @@ export default async function handler(req, res) {
                     clicks: parseInt(adData.clicks, 10),
                     cpm: parseFloat(adData.cpm),
                     date_eg: formattedDateStart,
-                    date_est: formattedDateStop
+                    date_est: formattedDateStop,
+                    inline_post_engagement: parseInt(adData.inline_post_engagement, 10)
                   }
                 });
           }
