@@ -28,9 +28,13 @@ export default async function handler(req, res) {
       const client = await pool.connect();
       try {
         // Set up headers for the fetch call
+        // Extract Cookie header from the incoming request
+        const cookie = req.headers.cookie;
+
+        // Set up headers for the fetch call, including the extracted Cookie
         const headers = {
           'Content-Type': 'application/json',
-          'Cookie': 'next-auth.csrf-token=307e3c0fb1b44a87a2ff21ef1ac5f6872e362bcbf6451b3ff89a5cce3ae6627e%7Ca1bd8a5cbc7883bf72fecb41ab3d15e626847a033ab3358cc17df1b8586a08f2; next-auth.callback-url=http%3A%2F%2Flocalhost%3A4002%2Fdashboard; next-auth.session-token=eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..C1TXjXFYw6wko614.l59EqgwP_U4mW7utDsDj0YeCVjNnqf_mRovQFVDxrsJvniJzUyz_UkGRZlkDXbLOnbyxbk2MrCyKie8Q5IbAF8aZ2TFsewqnyc8v7N77AwqRhBImqxE_kt_T84_XYR9yYAzuShx7teVGPlfvrBIzMGXIq8GztVc7CejZLoK-dU1l7TozJFFyE-nUB3z5PNUfj1zGS-5Pq59MVbUJpfoGD6HARklamBOA1ECrC-uUcW-miA.c3p5JBByEWYuaUqiajSIIQ'
+          'Cookie': cookie // Use the extracted Cookie here
         };
   
         // Fetch data from the external API using fetch
