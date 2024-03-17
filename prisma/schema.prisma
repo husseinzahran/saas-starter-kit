@@ -136,6 +136,7 @@ model orders {
   order_status                String?   @db.VarChar(255)
   isexchange                  Boolean?  @default(false)
   total_price                 Decimal?  @default(dbgenerated("((data ->> 'total_price'::text))::numeric")) @db.Decimal(10, 2)
+  shop_name               String?       @db.VarChar(355)
 }
 
 model qp_orders_full {

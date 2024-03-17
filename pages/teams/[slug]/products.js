@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {  StyleSheet} from '@react-pdf/renderer';
 import useTeam from 'hooks/useTeam';
@@ -8,9 +8,21 @@ export default function ShopifyPage() {
     const [startDate, setStartDate] = useState('');
     const [endDate, setEndDate] = useState('');
     const [tag, setTag] = useState('');
+    const [po, setPo] = useState('');
     const [data, setData] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [currentDate, setCurrentDate] = useState(new Date().toLocaleDateString());
     const { team } = useTeam();
+    useEffect(() => {
+        // Update the current date if necessary, e.g., every minute or on specific events
+        // This example simply sets it on component mount, but you can extend it to update periodically
+        const interval = setInterval(() => {
+            setCurrentDate(new Date().toLocaleDateString());
+        }, 60000); // Update every minute
+
+        return () => clearInterval(interval); // Cleanup the interval on component unmount
+    }, []);
+
 
     //console.log(team);
     const handleFilter = async () => {
@@ -92,9 +104,11 @@ export default function ShopifyPage() {
     return (
         <div className="flex gap-6 flex-col">
             <h1>Production Orders Management</h1>
-            <input type="date"  style={inputStyle} class="w-full max-w-md" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
-            <input type="date"  style={inputStyle} class="w-full max-w-md" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
-            <input type="text" style={inputStyle} class="w-full max-w-md" value={tag} onChange={(e) => setTag(e.target.value)} />
+            Start: <input type="date"  style={inputStyle} class="w-full max-w-md" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+            End: <input type="date"  style={inputStyle} class="w-full max-w-md" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+            Tag (PO ORDERS): <input type="text" style={inputStyle} class="w-full max-w-md" value={tag} onChange={(e) => setTag(e.target.value)} />
+            PO NUmber: <input type="text" style={inputStyle} class="w-full max-w-md" value={po} onChange={(e) => setPo(e.target.value)} />
+
             <button onClick={handleFilter} style={buttonStyle}>Filter</button>
 
             <style jsx>{`
@@ -135,6 +149,7 @@ export default function ShopifyPage() {
                     </thead>
                     <tbody>
                         {data.map((item, index) => (
+                            <>
                             <tr key={index}>
                                 <td>{item.sku}</td>
                                 <td>{item.productName}</td>
@@ -148,6 +163,12 @@ export default function ShopifyPage() {
                                     )}
                                 </td>
                             </tr>
+                            <tr>
+                                <td colSpan={6}>
+                                    <center>{currentDate} - {po}</center><br></br>
+                                </td>
+                            </tr>
+                            </>
                         ))}
                     </tbody>
                 </table>
